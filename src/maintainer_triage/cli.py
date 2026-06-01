@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import TextIO
 
 from .models import Issue
-from .report import render_json, render_markdown
+from .report import render_board_json, render_json, render_markdown
 from .rules import triage_issue
 
 
@@ -19,10 +19,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("issues_json", type=Path, help="Path to a JSON array of issue objects.")
     parser.add_argument(
         "--format",
-        choices=("markdown", "json"),
+        choices=("markdown", "json", "board"),
         default="markdown",
         help="Report format.",
     )
+    parser.add_argument("--project", default="Maintainer Triage Board", help="Project name for board exports.")
+    parser.add_argument("--repo", default="local/maintainer-triage", help="Repository label for board exports.")
+    parser.add_argument("--release", default="0.1.0", help="Release label for board exports.")
     return parser
 
 
@@ -43,6 +46,11 @@ def main(argv: list[str] | None = None, stdout: TextIO | None = None) -> int:
 
     issues = [Issue.from_mapping(item) for item in raw if isinstance(item, dict)]
     results = [triage_issue(issue) for issue in issues]
-    rendered = render_json(results) if args.format == "json" else render_markdown(results)
+    if args.format == "json":
+        rendered = render_json(results)
+    elif args.format == "board":
+        rendered = render_board_json(results, project_name=args.project, repo=args.repo, release=args.release)
+    else:
+        rendered = render_markdown(results)
     out.write(rendered)
     return 0

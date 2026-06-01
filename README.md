@@ -26,6 +26,7 @@ No runtime dependencies are required beyond Python 3.11+.
 ```bash
 python -m maintainer_triage examples/issues.sample.json --format markdown
 python -m maintainer_triage examples/issues.sample.json --format json
+python -m maintainer_triage examples/issues.sample.json --format board --repo owner/project
 ```
 
 Input is a JSON array of issue-like objects:
@@ -50,6 +51,7 @@ Input is a JSON array of issue-like objects:
 - LLM-assisted summaries for long issue threads.
 - Duplicate detection across issues and pull requests.
 - Maintainer policy packs for project-specific labels and release criteria.
+- Direct dashboard imports for Maintainer Ops Board.
 
 ## Development
 
